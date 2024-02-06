@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import CurrencyRow from './CurrencyRow';
 
-const BASE_URL = "https://v6.exchangerate-api.com/v6/aa6834ee44d55a8e55e68433/latest/USD"
-const ACCESS_KEY = "aa6834ee44d55a8e55e68433"
+const BASE_URL = "https://v6.exchangerate-api.com/v6/0abd8d8dbfa7f5119ced357b/latest/USD"
+const ACCESS_KEY = "0abd8d8dbfa7f5119ced357b"
 
 function App() {
   const [currencyOptions, setCurrencyOptions] = useState([])
@@ -30,11 +30,11 @@ function App() {
     })
     .then(res => res.json())
     .then(data => {
-      const baseCurrency = data.base_code; // Veriden base_code anahtarını alıyoruz
-      setCurrencyOptions([baseCurrency, ...Object.keys(data.conversion_rates)]);
-      setFromCurrency(baseCurrency); // İlk para birimini ayarlıyoruz
-      setToCurrency(Object.keys(data.conversion_rates)[0]); // İkinci para birimini ayarlıyoruz
-      setExchangeRate(data.conversion_rates[Object.keys(data.conversion_rates)[0]]); // Dönüşüm oranını ayarlıyoruz
+      const firstCurrency = Object.keys(data.conversion_rates)[0] // Veriden base_code anahtarını alıyoruz
+      setCurrencyOptions([data.base_code, ...Object.keys(data.conversion_rates)])
+      setFromCurrency(data.base_code) // İlk para birimini ayarlıyoruz
+      setToCurrency(firstCurrency) // İkinci para birimini ayarlıyoruz
+      setExchangeRate(data.conversion_rates[firstCurrency]) // Dönüşüm oranını ayarlıyoruz
     })
   },[])
 
@@ -44,7 +44,7 @@ function App() {
       .then(res => res.json())
       .then(data => setExchangeRate(data.conversion_rates[toCurrency]))
     }
-  })
+  },[fromCurrency, toCurrency])
 
   function handleFromAmountChange(e) {
     setAmount(e.target.value)
